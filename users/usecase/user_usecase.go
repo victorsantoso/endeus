@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/apex/log"
 	"github.com/victorsantoso/endeus/domain"
@@ -23,13 +22,10 @@ func NewUserUsecase(userRepository domain.UserRepository) domain.UserUsecase {
 
 func (uu *userUsecase) Register(ctx context.Context, registerDTO *domain.RegisterDTO) (string, error) {
 	// validation for register user
-	validateUser, err := uu.userRepository.FindByEmail(ctx, registerDTO.Email)
+	validateUser, _ := uu.userRepository.FindByEmail(ctx, registerDTO.Email)
 	if validateUser != nil {
 		log.Debugf("[user_usecase.Register] user already registered with: %+v", validateUser)
 		return "", domain.ErrDuplicateUser
-	}
-	if err == sql.ErrNoRows {
-		log.Debugf("[user_usecase.Register] error finding user by email, err: %v", err)
 	}
 
 	// hash password for security purposes
