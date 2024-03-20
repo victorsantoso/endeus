@@ -1,0 +1,27 @@
+{
+    "application": {
+        "port": "3000",
+        "debug": true
+    },
+    "database": {
+        "username": "postgres",
+        "password": "postgres",
+        "name": "endeus",
+        "host": "postgres-endeus",
+        "port": "5432",
+        "ssl_mode": "disable",
+        "connection_pool": {
+            "max_open": 60,
+            "max_lifetime": 120,
+            "max_idle": 30,
+            "max_idle_time": 20
+        }
+    },
+    "jwt": {
+        "secret": "endeus-secret",
+        "issuer": "endeus",
+        "audience": "endeus",
+        "subject": "endeus",
+        "jwt_expiration_time": 10800
+    }
+}

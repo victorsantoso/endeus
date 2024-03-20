@@ -1,0 +1,913 @@
+openapi: 3.0.0
+info:
+  title: endeus recipe API
+  version: 1.0.0
+  contact:
+    name: Victor Santoso
+    email: victorsantoso1306@gmail.com
+servers:
+  - url: http://localhost:3000
+paths:
+# USER
+  /api/v1/register:
+    post:
+      summary: Register a new user
+      description: Register a new user with the provided information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/PostRegisterRequestBody'
+            example:
+              role: ADMIN
+              email: testguser@gmail.com
+              password: testUser*999
+              name: Test User
+      responses:
+        '200':
+          description: Success response for Register Endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/PostRegisterSuccessResponse'
+              example:
+                access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                code: 200
+                message: successfully registered a new user
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: bad request
+                code: 400
+        '409':
+          description: Conflict response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: duplicate entry
+                code: 409
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500
+  /api/v1/login:
+    post:
+      summary: Log in a user
+      description: Log in a user with the provided credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/PostLoginRequestBody'
+            example:
+              email: testuser@gmail.com
+              password: testUser*999
+      responses:
+        '200':
+          description: Success response for Log in Endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/PostLoginSuccessResponse'
+              example:
+                access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                code: 200
+                message: successfully logged in
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: bad request
+                code: 400
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500
+# RECIPE 
+  /api/v1/recipe_category:
+    post:
+      summary: Post recipe category
+      description: Post a new recipe category with restriction control access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/PostRecipeCategoryRequestBody'
+            example:
+              category_tag: "Test Category"
+      responses:
+        '200':
+          description: Success response for Post recipe category Endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/PostRecipeCategorySuccessResponse'
+              example:
+                message: category created successfully
+                code: 200
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: bad request
+                code: 400
+        '403':
+          description: Forbidden response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: unauthorized
+                code: 403
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500
+  /api/v1/recipe_category/{id}:
+    get:
+      summary: Get recipe category by ID
+      description: Get specific recipe category by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success response for Get recipe category by ID Endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/GetRecipeCategoryByIdSuccessResponse'
+              example:
+                recipe_category:
+                  category_id: 1
+                  category_tag: "Test Category"
+                message: category retrieved successfully
+                code: 200
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: bad request
+                code: 400
+        '404':
+          description: Not Found response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: category not found
+                code: 404
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500      
+  /api/v1/recipe_categories:
+    get:
+      summary: Get all recipe categories
+      description: Get all recipe categories available in the system
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "Test Category"
+      responses:
+        '200':
+          description: Success response for Get all recipe categories Endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/GetRecipeCategoriesSuccessResponse'
+              example:
+                recipe_categories:
+                  - category_id: 1
+                    category_tag: "Test Category"
+                  - category_id: 2
+                    category_tag: "Another Category"
+                message: categories retrieved successfully
+                code: 200
+        '404':
+          description: Not Found response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: categories not found
+                code: 404
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500
+  /api/v1/recipe:
+    post:
+      summary: Create a new recipe
+      description: Create a new recipe with provided request body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/PostRecipeRequestBody'
+            example:
+              category_id: 1
+              title: "Test Recipe"
+              header: "Test Recipe Header"
+              image_preview: "https://example.com/recipe.jpg"
+              description: "Test Recipe Description"
+              estimated_time_minutes: 30
+              recipe_ingredients:
+                - ingredient: "Test Ingredient 1"
+                  amount: "2 cups"
+                - ingredient: "Test Ingredient 2"
+                  amount: "1 tbsp"
+      responses:
+        '200':
+          description: Success response for Create a new recipe Endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/PostRecipeSuccessResponse'
+              example:
+                message: recipe created successfully
+                code: 200
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: bad request
+                code: 400
+        '403':
+          description: Forbidden response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: unauthorized
+                code: 403
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500
+  /api/v1/recipe/{id}:
+    get:
+      summary: Get recipe by ID.
+      description: Get specific recipe by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successful response for get recipe by ID endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/GetRecipeByIdResponse'
+              example:
+                recipe:
+                  recipe_id: 1
+                  category_id: 1
+                  title: "Spaghetti Carbonara"
+                  header: "Classic Italian Pasta Dish"
+                  image_preview: "https://example.com/spaghetti_carbonara.jpg"
+                  description: "Creamy pasta dish with bacon and Parmesan cheese."
+                  estimated_time_minutes: 30
+                  recipe_ingredients: {"pasta": "200g", "bacon": "100g", "eggs": "2", "Parmesan cheese": "50g"}
+                  created_at: "2024-03-20T12:00:00Z"
+                  updated_at: "2024-03-20T12:30:00Z"
+                message: "Recipe retrieved successfully."
+                code: 200
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: bad request
+                code: 400
+        '404':
+          description: Not Found response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: not found
+                code: 404
+        '500':
+          description: Internal Server Error response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500
+    put:
+      security:
+        - bearerAuth: []
+      summary: Update recipe by ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/PutRecipeByIdRequestBody'
+      description: Update specific Recipe by its ID.
+      responses:
+        '200':
+          description: Successful response for put recipe by ID endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/PutRecipeByIdSuccessResponse'
+              example:
+                message: "Recipe updated successfully."
+                code: 200
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Bad request"
+                code: 400
+        '403':
+          description: Forbidden response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Forbidden"
+                code: 403
+        '404':
+          description: Not Found response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Not found"
+                code: 404
+        '500':
+          description: Internal Server Error response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Internal server error"
+                code: 500
+    delete:
+      security:
+      - bearerAuth: []
+      summary: Delete Recipe by ID.
+      description: Delete specific Recipe by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successful response for delete recipe by ID endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/DeleteRecipeByIdSuccessResponse'
+              example:
+                message: "Recipe deleted successfully."
+                code: 200
+        '400':
+          description: Bad Request response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Bad request"
+                code: 400
+        '403':
+          description: Forbidden response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Forbidden"
+                code: 403
+        '404':
+          description: Not Found response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Not found"
+                code: 404
+        '500':
+          description: Internal Server Error response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Internal server error"
+                code: 500
+  /api/v1/recipes:
+    get:
+      summary: Get all recipes.
+      description: Get all recipes available in the system.
+      parameters:
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+            example: nasi goreng
+        - in: query
+          name: category_id
+          required: false
+          schema:
+            type: integer
+            format: int32
+            example: 1
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            format: int32
+            example: 10
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            format: int32
+            example: 0
+      responses:
+        '200':
+          description: Successful response for get all recipes endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/GetRecipesResponse'
+              example:
+                recipes:
+                  - recipe_id: 1
+                    category_id: 1
+                    title: "Spaghetti Carbonara"
+                    header: "Classic Italian Pasta Dish"
+                    image_preview: "https://example.com/spaghetti_carbonara.jpg"
+                    description: "Creamy pasta dish with bacon and Parmesan cheese."
+                    estimated_time_minutes: 30
+                    recipe_ingredients: {"pasta": "200g", "bacon": "100g", "eggs": "2", "Parmesan cheese": "50g"}
+                    created_at: "2024-03-20T12:00:00Z"
+                    updated_at: "2024-03-20T12:30:00Z"
+                  - recipe_id: 2
+                    category_id: 1
+                    title: "Chicken Alfredo"
+                    header: "Creamy Chicken Pasta Dish"
+                    image_preview: "https://example.com/chicken_alfredo.jpg"
+                    description: "Rich and creamy pasta dish with chicken and Alfredo sauce."
+                    estimated_time_minutes: 45
+                    recipe_ingredients: {"pasta": "250g", "chicken": "300g", "Alfredo sauce": "200ml"}
+                    created_at: "2024-03-21T08:00:00Z"
+                    updated_at: "2024-03-21T08:30:00Z"
+                message: "Recipes retrieved successfully."
+                code: 200
+        '404':
+          description: Not Found response error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: "Recipes not found"
+                code: 404
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              example:
+                message: internal server error
+                code: 500
+
+components:
+  requestBodies:
+    PostRegisterRequestBody:
+      description: Request body for user registration endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - role
+              - email
+              - password
+              - name
+            properties:
+              role:
+                type: string
+                enum:
+                  - ADMIN
+                  - READER
+                description: Role for defining user access permission.
+              email:
+                type: string
+                format: email
+                minLength: 9
+                maxLength: 60
+                description: User's email for registration.
+              password:
+                type: string
+                minLength: 6
+                maxLength: 20
+                description: User's password for registration.
+              name:
+                type: string
+                minLength: 3
+                maxLength: 60
+                description: User's full name for registration.
+              profile_image:
+                type: string
+                description: User's profile image in url format (for demo purposes). In real case you might want to use something like cloud storage services to store profile_image.
+    PostLoginRequestBody:
+      description: Request body for login endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                format: email
+                description: User's email for login.
+              password:
+                type: string
+                description: User's password for login.
+    PostRecipeCategoryRequestBody:
+      description: Request body for recipe category creation endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - category_tag
+            properties:
+              category_tag:
+                type: string
+                description: tag for new category.
+    PostRecipeRequestBody:
+      description: Request body for recipe creation endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - category_id
+              - title
+              - header
+              - image_preview
+              - description
+              - estimated_time_minutes
+              - recipe_ingredients
+            properties:
+              user_id:
+                type: integer
+                format: int32
+                description: recipe creator user_id for post recipe.
+              category_id:
+                type: integer
+                format: int32
+                description: recipe_category for the post recipe.
+              title:
+                type: string
+                description: title for recipe.
+              header:
+                type: string
+                description: header or summary for the recipe.
+              image_preview:
+                type: string
+                description: image preview for the recipe for testing purpose in url.
+              description:
+                type: string
+                description: description for the recipe if exists.
+              estimated_time_minutes:
+                type: integer
+                format: int32
+                description: estimated time for cooking the recipe.
+              recipe_ingredients:
+                type: object
+    PutRecipeByIdRequestBody:
+      description: Request body for recipe update endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - asdf
+  responses:
+    PostRegisterSuccessResponse:
+      description: Successful registration response.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                description: Access token for the registered user.
+              message:
+                type: string
+                description: Message indicating the success of the registration process.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating the success of the registration process.
+    PostLoginSuccessResponse:
+      description: Successful login response.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                description: Access token for the logged-in user.
+              message:
+                type: string
+                description: Message indicating the success of the login process.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating the successs of the login process.
+    PostRecipeCategorySuccessResponse:
+      description: Successful response after posting a recipe category.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Message indicating success in posting a recipe category.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating success in posting a recipe category.
+    GetRecipeCategoryByIdSuccessResponse:
+      description: Successful response after retrieving a recipe category by ID.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              recipe_category:
+                type: object
+                $ref: '#/components/schemas/RecipeCategory'
+                description: Retrieved recipe category.
+              message:
+                type: string
+                description: Message indicating success in retrieving a recipe category by ID.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating success in retrieving a recipe category by ID.
+    GetRecipeCategoriesSuccessResponse:
+      description: Successful response after retrieving recipe categories.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              recipe_categories:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/RecipeCategory'
+                description: List of retrieved recipe categories.
+              message:
+                type: string
+                description: Message indicating success in retrieving recipe categories.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating success in retrieving recipe categories.
+    GetRecipeByIdResponse:
+      description: Successful response for get recipe by ID endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              recipe:
+                type: object
+                $ref: '#/components/schemas/Recipe'
+              message:
+                type: string
+                description: Message indicating success in get recipe by ID.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating succes in get recipe by ID.
+    GetRecipesResponse:
+      description: Sucessful respones for get recipes endppoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              recipes:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+                description: List of retrieved recipes.
+              message:
+                type: string
+                description: Message indicating success in retrieving all recipes.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating success in retrieving all recipes.
+    PostRecipeSuccessResponse:
+      description: Successful response for post recipe endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Message indicating success in creating a new recipe.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating success in creating a new recipe.
+    PutRecipeByIdSuccessResponse:
+      description: Successful response for put recipe by ID endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Message indicating success in updating recipe by ID process.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating success in updating recipe by ID process.
+    DeleteRecipeByIdSuccessResponse:
+      description: Successful response for delete recipe by ID endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Message indicating success in deleting recipe by ID process.
+              code:
+                type: integer
+                format: int32
+                description: Code indicating success in deleting recipe by ID process.
+    ErrorResponse:
+      description: Response upon error process.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                description: Error code for api response based on error.
+              message:
+                type: string
+                description: Error message for api response based on error.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RecipeCategory:
+      type: object
+      properties:
+        category_id:
+          type: integer
+          format: int32
+          description: Recipe Category ID.
+        category_tag:
+          type: string
+          description: Recipe Category tag.
+    Recipe:
+      type: object
+      properties:
+        recipe_id:
+          type: integer
+          format: int32
+          description: Recipe ID.
+        category_id:
+          type: integer
+          format: int32
+          description: Recipe Category Id for Recipe.
+        title:
+          type: string
+          description: Title for Recipe.
+        header:
+          type: string
+          description: Header for Recipe as preview.
+        image_preview:
+          type: string
+          description: Image Preview url for the recipe.
+        description:
+          type: string
+          description: Extra Description for Recipe if exists.
+        estimated_time_minutes:
+          type: integer
+          format: int32
+          description: Estimation time for cooking the Recipe in minutes.
+        recipe_ingredients:
+          type: object
+          description: Ingredients in json, can be added with extra fields.
+        created_at:
+          type: string
+          description: Time for Recipe creation time.
+        updated_at:
+          type: string
+          description: Time for Recipe last update time.
